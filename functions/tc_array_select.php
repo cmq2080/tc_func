@@ -20,9 +20,7 @@ function tc_array_select($array, $while_list = [], $black_list = [])
     } else {
         $result = $array;
         foreach ($black_list as $key) {
-            if (isset($array[$key])) {
-                unset($array[$key]);
-            }
+            unset($array[$key]);
         }
     }
     return $result;

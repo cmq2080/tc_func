@@ -20,7 +20,7 @@ function ajax_return($stat = 0, $msg = 'ok', $data = [], $return_json = false)
     $info = json_encode($info, JSON_UNESCAPED_UNICODE);
 
     if ($return_json === true) {
-        return json_encode($info);
+        return $info;
     } else {
         echo $info;
         die;

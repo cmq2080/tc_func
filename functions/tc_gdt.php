@@ -1,4 +1,9 @@
 <?php
+// tc_gdt 函数常量集合
+const TC_DATE_TIME = 1;
+const TC_DATE      = 2;
+const TC_TIME      = 3;
+
 /**
  * 功能：获取当前日期&时间
  * Created at 2018/10/1 10:04 by 陈庙琴
