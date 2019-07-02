@@ -7,6 +7,7 @@
 $functions = [
     'ajax_return',
     'http_break_query',
+    'tc_array_check',
     'tc_array_del',
     'tc_array_select',
     'tc_array_trim',
