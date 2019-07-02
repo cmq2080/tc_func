@@ -29,6 +29,6 @@ $functions = [
 // load files
 foreach ($functions as $function) {
     if (!function_exists($function)) {
-        require './functions/' . $function . '.php';
+        require 'functions/' . $function . '.php';
     }
 }
