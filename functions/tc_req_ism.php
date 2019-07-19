@@ -1,11 +1,15 @@
 <?php
 /**
- * 功能：判断是否是移动端访问
- * Created at 2018/10/1 10:15 by 陈庙琴
+ * 功能：判断请求是否来自于移动端
+ * Created By mq at 09:42 2019-07-19
  * @return bool
+ * @throws Exception
  */
-function tc_mreq()
+function tc_req_ism()
 {
+    if (isset($_SERVER) === false) {
+        throw new \Exception('Unavailable in CLI mode');
+    }
     $_SERVER['ALL_HTTP'] = isset($_SERVER['ALL_HTTP']) ? $_SERVER['ALL_HTTP'] : '';
     $mobile_browser      = '0';
     if (preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|iphone|ipad|ipod|android|xoom)/i', strtolower($_SERVER['HTTP_USER_AGENT']))) {

@@ -6,7 +6,7 @@
  * Time: 09:48
  */
 
-require_once 'function_list.php';
+require 'function_list.php';
 
 $content = "<?php\n/**\n * Made at " . date('Y/m/d H:i:s') . "\n */";
 foreach ($functions as $function) {

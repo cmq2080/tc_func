@@ -7,7 +7,7 @@
  */
 function tc_gcn($obj)
 {
-    $classNames = explode('\\', get_class($obj));
-    $className  = $classNames[count($classNames) - 1];
-    return $className;
+    $class_names = explode('\\', get_class($obj));
+    $class_name  = $class_names[count($class_names) - 1];
+    return $class_name;
 }
