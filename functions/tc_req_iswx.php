@@ -10,7 +10,7 @@ function tc_req_iswx()
     if (isset($_SERVER) === false) {
         throw new \Exception('Unavailable in CLI mode');
     }
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger/') !== false) {
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
         return true;
     }
     return false;

@@ -20,7 +20,7 @@ function tc_str_rand($length = 4, $only_number = false, $insensitive = false)
         $text = $number_text . $lower_text . $upper_text;
     }
     $str   = '';
-    $chars = str_split($text);// 做成随机字符数组可以提升性能，比以往的截取字符串可提升15-25%的性能（split函数已经废弃）
+    $chars = str_split($text);// 做成随机字符数组可以比以往的截取字符串提升15-25%的性能（split函数已经废弃）
     for ($i = 0; $i < $length; $i++) {
         $str .= $chars[mt_rand(0, count($chars) - 1)];
     }

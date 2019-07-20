@@ -5,10 +5,10 @@
  * @param int $stat
  * @param string $msg
  * @param array $data
- * @param bool $return_json
+ * @param bool $only_return_json
  * @return false|string
  */
-function ajax_return($stat = 0, $msg = 'ok', $data = [], $return_json = false)
+function ajax_return($stat = 0, $msg = 'ok', $data = [], $only_return_json = false)
 {
     $info = [
         'stat' => $stat,
@@ -19,7 +19,7 @@ function ajax_return($stat = 0, $msg = 'ok', $data = [], $return_json = false)
     }
     $info = json_encode($info, JSON_UNESCAPED_UNICODE);
 
-    if ($return_json === true) {
+    if ($only_return_json) {
         return $info;
     } else {
         echo $info;
