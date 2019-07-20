@@ -2,14 +2,14 @@
 /**
  * 功能：获取当前地址
  * Created at 2018/10/1 10:33 by 陈庙琴
- * @param bool $full_url 是否全路由（加上uri的部分）
+ * @param bool $with_uri 是否全路由（加上uri的部分）
  * @return string
  */
-function tc_gurl($full_url = true)
+function tc_gurl($with_uri = true)
 {
     // 获取访问协议
     $protocol = 'http://';
-    if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) === 'on') {
+    if (isset($_SERVER['HTTPS']) === true && strtolower($_SERVER['HTTPS']) === 'on') {
         $protocol = 'https://';
     }
 
@@ -19,7 +19,7 @@ function tc_gurl($full_url = true)
         $url .= ':' . $_SERVER['SERVER_PORT'];
     }
 
-    if ($full_url) {
+    if ($with_uri) {
         // 拼接全url
         $url .= $_SERVER['REQUEST_URI'];
     }
