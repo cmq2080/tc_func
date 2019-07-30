@@ -28,7 +28,7 @@ function tc_array_check($data, $keys, $mode = 7)
         if (($mode & TC_N_EMPTY > 0) && $data[$key] === '') {
             return false;
         }
-        if (($mode & TC_N_ZERO > 0) && $data[$key] == 0) {
+        if (($mode & TC_N_ZERO > 0) && ($data[$key] === 0 || $data[$key] === '0')) {
             return false;
         }
     }
