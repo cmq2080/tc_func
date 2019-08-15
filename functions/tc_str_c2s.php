@@ -10,10 +10,10 @@ function tc_str_c2s($string, $prefix = '_')
 {
     $array = str_split($string);
     foreach ($array as $key => $value) {
-        if ($key > 0 && ord($value) >= 65 && ord($value) <= 90) {
+        if (ord($value) >= 65 && ord($value) <= 90) {
             $array[$key] = $prefix . chr(ord($value) + 32);
         }
     }
 
-    return implode('', $array);
+    return ltrim(implode('', $array), $prefix);
 }
