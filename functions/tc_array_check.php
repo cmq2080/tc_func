@@ -1,4 +1,5 @@
 <?php
+// tc_array_check常量集合
 const TC_N_NULL  = 4;
 const TC_N_EMPTY = 2;
 const TC_N_ZERO  = 1;
