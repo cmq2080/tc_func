@@ -23,5 +23,6 @@ function tc_array_slc($array, $while_list = [], $black_list = [])
             unset($result[$key]);
         }
     }
+
     return $result;
 }
