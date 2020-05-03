@@ -7,16 +7,18 @@
  * @param string $sign
  * @return array
  */
-function tc_str_slice($string, $length, $sign = '', $encoding = 'utf-8')
+function tc_str_slice($string, $length, $sign = '')
 {
-    $str_length = mb_strlen($string, $encoding);
+    $str_length = mb_strlen($string);
     $result     = [];
     for ($i = 0; $i < $str_length; $i += $length) {
-        $len = $length;
-        if ($i + $len > $str_length) {
-            $len = $str_length - $i + 1;
+        if ($i + $length > $str_length) { // 截取到头了
+            $str = mb_substr($string, $i);
+        } else {
+            $str = mb_substr($string, $i, $length);
         }
-        $result[] = $sign . mb_substr($string, $i, $len, $encoding) . $sign;
+
+        $result[] = $sign . $str . $sign;
     }
     return $result;
 }

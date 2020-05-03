@@ -8,9 +8,13 @@
  */
 function tc_str_edw($haystack, $needle)
 {
-    $h_length = mb_strlen($haystack);
-    $n_length = mb_strlen($needle);
-    if ($n_length > 0 && (strpos($haystack, $needle, $n_length * (-1)) === $h_length - $n_length)) {
+    $haystack_length = mb_strlen($haystack);
+    $needle_length   = mb_strlen($needle);
+    if ($haystack_length <= $needle_length) {
+        return false;
+    }
+    $str = mb_substr($haystack, (-1) * $needle_length);
+    if ($str === $needle) {
         return true;
     }
 

@@ -1,20 +1,20 @@
 <?php
 /**
  * 功能：生成随机字符串
- * Created at 2018/10/1 14:47 by 陈庙琴
+ * Created at 2020/5/3 10:24 by mq
  * @param int $length
  * @param bool $only_number
- * @param bool $insensitive
+ * @param bool $case_insensitive
  * @return string
  */
-function tc_str_rand($length = 4, $only_number = false, $insensitive = false)
+function tc_str_rand($length = 4, $only_number = false, $case_insensitive = false)
 {
     $number_text = '1234567890';
     $lower_text  = 'abcdefghijklmnopqrstuvwxyz';
     $upper_text  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     if ($only_number === true) {
         $text = $number_text;
-    } else if ($insensitive === true) {
+    } else if ($case_insensitive === true) {
         $text = $number_text . $lower_text;
     } else {
         $text = $number_text . $lower_text . $upper_text;

@@ -8,7 +8,7 @@
  */
 function tc_str_stw($haystack, $needle)
 {
-    if (mb_strlen($needle) > 0 && strpos($haystack, $needle, 0) === 0) {
+    if (mb_strlen($needle) > 0 && mb_strpos($haystack, $needle, 0) === 0) {
         return true;
     }
 

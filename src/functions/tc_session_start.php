@@ -5,7 +5,7 @@
  */
 function tc_session_start()
 {
-    if (!isset($_SESSION)) {
+    if (isset($_SESSION) === false) {
         session_start();
     }
 }

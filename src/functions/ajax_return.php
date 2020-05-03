@@ -8,13 +8,13 @@
  * @param bool $return_json
  * @return false|string
  */
-function ajax_return($stat = 0, $msg = 'ok', $data = [], $return_json = false)
+function ajax_return($stat = 0, $msg = 'ok', $data = null, $return_json = false)
 {
     $info = [
         'stat' => $stat,
         'msg'  => $msg
     ];
-    if ($data) {
+    if ($data !== null) {
         $info['data'] = $data;
     }
     $info = json_encode($info, JSON_UNESCAPED_UNICODE);
