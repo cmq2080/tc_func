@@ -15,5 +15,6 @@ function http_break_query($query)
         }
         $result[$value[0]] = $value[1];
     }
+
     return $result;
 }

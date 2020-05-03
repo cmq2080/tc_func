@@ -5,7 +5,7 @@
  * @param bool $with_uri 是否全路由（加上uri的部分）
  * @return string
  */
-function tc_gurl($with_uri = true)
+function tc_gurl($with_uri = true, $with_query = true)
 {
     // 获取访问协议
     $protocol = 'http://';
@@ -21,7 +21,12 @@ function tc_gurl($with_uri = true)
 
     if ($with_uri) {
         // 拼接全url
-        $url .= $_SERVER['REQUEST_URI'];
+        $uri = $_SERVER['REQUEST_URI'];
+        if ($with_query !== true) {
+            $uri = substr($uri, 0, strpos($uri, '?'));
+        }
+        $url .= $uri;
     }
+
     return $url;
 }

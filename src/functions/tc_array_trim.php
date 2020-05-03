@@ -12,5 +12,6 @@ function tc_array_trim($array)
             unset($array[$key]);
         }
     }
+
     return $array;
 }
