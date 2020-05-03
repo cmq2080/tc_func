@@ -1,6 +1,6 @@
 <?php
 /**
- * Made at 2020/05/02 21:28:47
+ * Made at 2020/05/03 11:37:23
  */
 
 if (function_exists('ajax_return') === false) {
@@ -13,13 +13,13 @@ if (function_exists('ajax_return') === false) {
  * @param bool $return_json
  * @return false|string
  */
-function ajax_return($stat = 0, $msg = 'ok', $data = [], $return_json = false)
+function ajax_return($stat = 0, $msg = 'ok', $data = null, $return_json = false)
 {
     $info = [
         'stat' => $stat,
         'msg'  => $msg
     ];
-    if ($data) {
+    if ($data !== null) {
         $info['data'] = $data;
     }
     $info = json_encode($info, JSON_UNESCAPED_UNICODE);
@@ -50,46 +50,48 @@ function http_break_query($query)
         }
         $result[$value[0]] = $value[1];
     }
+
     return $result;
 }}
 
 
 // tc_array_check常量集合
-const TC_N_NULL  = 4;
-const TC_N_EMPTY = 2;
-const TC_N_ZERO  = 1;
+const TC_N_NULL  = 8;
+const TC_N_EMPTY = 4;
+const TC_N_ZERO  = 2;
+const TC_N_FALSE = 1;
 if (function_exists('ajax_return') === false) {
 /**
  * 功能：验证数组中的元素是否均非null or 非空字符串 or 非零值
- * 非字符串类型除外
- * Created By mq at 13:56 2019-07-02
+ * Created at 2020/5/2 21:48 by mq
  * @param $data
  * @param $keys
- * @param string $mode
- * @return bool
+ * @param int $mode
+ * @return string
  */
-function tc_array_check($data, $keys, $mode = 7)
+function tc_array_check($data, $keys, $mode = 15)
 {
+    $result = '';
     foreach ($keys as $key) {
         if (isset($data[$key]) === false) {
-            return false;
-        }
-        if (is_string($data[$key]) === false) {
-            continue;
-        }
-
-        if (($mode & TC_N_NULL > 0) && ($data[$key] === null)) {
-            return false;
-        }
-        if (($mode & TC_N_EMPTY > 0) && $data[$key] === '') {
-            return false;
-        }
-        if (($mode & TC_N_ZERO > 0) && ($data[$key] === 0 || $data[$key] === '0')) {
-            return false;
+            $result .= '.' . $key . ' is not found;';
+        } else if (($mode & TC_N_NULL > 0) && ($data[$key] === null)) {
+            $result .= '.' . $key . ' is null;';
+        } else if (($mode & TC_N_EMPTY > 0)) { // 空字符串
+            if ($data[$key] === '') {
+                $result .= '.' . $key . ' is empty string;';
+                continue;
+            } else if ($data[$key] === []) { // 空数组
+                $result .= '.' . $key . ' is empty array;';
+            }
+        } else if (($mode & TC_N_ZERO > 0) && ($data[$key] === 0 || $data[$key] === '0')) {
+            $result .= '.' . $key . ' is zero;';
+        } else if ($mode & TC_N_FALSE > 0 && ($data[$key] === false)) {
+            $result .= '.' . $key . ' is false';
         }
     }
 
-    return true;
+    return $result;
 }}
 
 
@@ -98,17 +100,18 @@ if (function_exists('ajax_return') === false) {
  * 功能：删除数组中有特定值的元素
  * Created By mq at 下午6:35 2018/12/25
  * @param $array
- * @param $del_value
+ * @param $delete_value
  * @param int $count 最多删除次数，0为无限制
  */
-function tc_array_del(&$array, $del_value, $count = 0)
+function tc_array_del(&$array, $delete_value, $count = 0)
 {
-    $i = 0;
+    // 初始化计数器（逆向计数，到0停止）（因为0先减为了-1，所以永远也不可能到0）
+    $left = $count;
     foreach ($array as $key => $value) {
-        if ($value == $del_value) {
+        if ($value == $delete_value) {
             unset($array[$key]);
-            $i++;
-            if ($count > 0 && $count === $i) {
+            $left--; // 计数器加1
+            if ($left === 0) {
                 break;
             }
         }
@@ -129,9 +132,9 @@ if (function_exists('ajax_return') === false) {
 function tc_array_slc($array, $while_list = [], $black_list = [])
 {
     $result = [];
-    if ($while_list) {
+    if (empty($while_list) === true) {
         foreach ($while_list as $key) {
-            if (isset($array[$key])) {
+            if (isset($array[$key]) === true) {
                 $result[$key] = $array[$key];
             }
         }
@@ -141,6 +144,7 @@ function tc_array_slc($array, $while_list = [], $black_list = [])
             unset($result[$key]);
         }
     }
+
     return $result;
 }}
 
@@ -159,33 +163,8 @@ function tc_array_trim($array)
             unset($array[$key]);
         }
     }
+
     return $array;
-}}
-
-
-if (function_exists('ajax_return') === false) {
-/**
- * 功能：获取数组元素中的某一键所对应的值
- * 描述：可自动识别二维数组、对象数组以及它们json化后的格式
- * Created at 2019/3/24 14:52 by mq
- * @param $arrays
- * @param $key
- * @return array
- */
-function tc_array_vls($arrays, $key)
-{
-    if (!is_array($arrays)) {
-        $arrays = json_decode($arrays);
-    }
-    $result = [];
-    foreach ($arrays as $array) {
-        if (isset($array[$key])) {
-            $result[] = $array[$key];
-        } else if (isset($array->$key)) {
-            $result[] = $array->$key;
-        }
-    }
-    return $result;
 }}
 
 
@@ -201,37 +180,6 @@ function tc_gcn($obj)
     $class_names = explode('\\', get_class($obj));
     $class_name  = $class_names[count($class_names) - 1];
     return $class_name;
-}}
-
-
-// tc_gdt 函数常量集合
-const TC_DATE_TIME = 1;
-const TC_DATE      = 2;
-const TC_TIME      = 3;
-if (function_exists('ajax_return') === false) {
-/**
- * 功能：获取当前日期&时间
- * Created at 2018/10/1 10:04 by 陈庙琴
- * @param int $mode 模式:0（默认）-获取日期和时间；1-仅获取日期;2-仅获取时间
- * @return false|null|string
- */
-function tc_gdt($mode = TC_DATE_TIME)
-{
-    $date = null;
-    switch ($mode) {
-        case TC_DATE_TIME:
-            $date = date('Y-m-d H:i:s');
-            break;
-        case TC_DATE:
-            $date = date('Y-m-d');
-            break;//因为0和null是同值，所以从1开始
-        case TC_TIME:
-            $date = date('H:i:s');
-            break;
-        default:
-            die('模式错误[$mode 模式:0（默认）-获取日期和时间；1-仅获取日期;2-仅获取时间]');
-    }
-    return $date;
 }}
 
 
@@ -268,7 +216,7 @@ if (function_exists('ajax_return') === false) {
  * @param bool $with_uri 是否全路由（加上uri的部分）
  * @return string
  */
-function tc_gurl($with_uri = true)
+function tc_gurl($with_uri = true, $with_query = true)
 {
     // 获取访问协议
     $protocol = 'http://';
@@ -284,8 +232,13 @@ function tc_gurl($with_uri = true)
 
     if ($with_uri) {
         // 拼接全url
-        $url .= $_SERVER['REQUEST_URI'];
+        $uri = $_SERVER['REQUEST_URI'];
+        if ($with_query !== true) {
+            $uri = substr($uri, 0, strpos($uri, '?'));
+        }
+        $url .= $uri;
     }
+
     return $url;
 }}
 
@@ -374,7 +327,7 @@ if (function_exists('ajax_return') === false) {
  */
 function tc_session_start()
 {
-    if (!isset($_SESSION)) {
+    if (isset($_SESSION) === false) {
         session_start();
     }
 }}
@@ -385,19 +338,19 @@ if (function_exists('ajax_return') === false) {
  * 功能：字符串驼峰转蛇式
  * Created By mq at 15:14 2019-08-02
  * @param $string
- * @param string $prefix
+ * @param string $split
  * @return string
  */
-function tc_str_c2s($string, $prefix = '_')
+function tc_str_c2s($string, $split = '_')
 {
     $array = str_split($string);
     foreach ($array as $key => $value) {
-        if (ord($value) >= 65 && ord($value) <= 90) {
-            $array[$key] = $prefix . chr(ord($value) + 32);
+        if (ord($value) >= 65 && ord($value) <= 90) { // 大写字母A-Z
+            $array[$key] = $split . chr(ord($value) + 32);
         }
     }
 
-    return ltrim(implode('', $array), $prefix);
+    return ltrim(implode('', $array), $split); // 如果是全驼峰的话，最前面一定会有分割符，这时候我们就把它去掉
 }}
 
 
@@ -411,9 +364,13 @@ if (function_exists('ajax_return') === false) {
  */
 function tc_str_edw($haystack, $needle)
 {
-    $h_length = mb_strlen($haystack);
-    $n_length = mb_strlen($needle);
-    if ($n_length > 0 && (strpos($haystack, $needle, $n_length * (-1)) === $h_length - $n_length)) {
+    $haystack_length = mb_strlen($haystack);
+    $needle_length   = mb_strlen($needle);
+    if ($haystack_length <= $needle_length) {
+        return false;
+    }
+    $str = mb_substr($haystack, (-1) * $needle_length);
+    if ($str === $needle) {
         return true;
     }
 
@@ -457,20 +414,20 @@ function tc_str_limit($string, $length, $sign = '...')
 if (function_exists('ajax_return') === false) {
 /**
  * 功能：生成随机字符串
- * Created at 2018/10/1 14:47 by 陈庙琴
+ * Created at 2020/5/3 10:24 by mq
  * @param int $length
  * @param bool $only_number
- * @param bool $insensitive
+ * @param bool $case_insensitive
  * @return string
  */
-function tc_str_rand($length = 4, $only_number = false, $insensitive = false)
+function tc_str_rand($length = 4, $only_number = false, $case_insensitive = false)
 {
     $number_text = '1234567890';
     $lower_text  = 'abcdefghijklmnopqrstuvwxyz';
     $upper_text  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     if ($only_number === true) {
         $text = $number_text;
-    } else if ($insensitive === true) {
+    } else if ($case_insensitive === true) {
         $text = $number_text . $lower_text;
     } else {
         $text = $number_text . $lower_text . $upper_text;
@@ -504,16 +461,17 @@ function tc_str_rp($string, $replace_array)
 if (function_exists('ajax_return') === false) {
 /**
  * 功能：字符串蛇式转驼峰
- * Created By mq at 15:14 2019-08-02
+ * Created at 2020/5/2 22:25 by mq
  * @param $string
- * @param string $prefix
+ * @param string $split
+ * @param bool $firstWordUpper 第一个词是否也要转为大写，即是否为全驼峰格式
  * @return string
  */
-function tc_str_s2c($string, $prefix = '_', $firstWordUpper = false)
+function tc_str_s2c($string, $split = '_', $firstWordUpper = false)
 {
-    $array = explode($prefix, $string);
+    $array = explode($split, $string);
     foreach ($array as $key => $value) {
-        if ($key == 0 && $firstWordUpper === false) {
+        if ($key === 0 && $firstWordUpper === false) {
             continue;
         }
 
@@ -533,16 +491,18 @@ if (function_exists('ajax_return') === false) {
  * @param string $sign
  * @return array
  */
-function tc_str_slice($string, $length, $sign = '', $encoding = 'utf-8')
+function tc_str_slice($string, $length, $sign = '')
 {
-    $str_length = mb_strlen($string, $encoding);
+    $str_length = mb_strlen($string);
     $result     = [];
     for ($i = 0; $i < $str_length; $i += $length) {
-        $len = $length;
-        if ($i + $len > $str_length) {
-            $len = $str_length - $i + 1;
+        if ($i + $length > $str_length) { // 截取到头了
+            $str = mb_substr($string, $i);
+        } else {
+            $str = mb_substr($string, $i, $length);
         }
-        $result[] = $sign . mb_substr($string, $i, $len, $encoding) . $sign;
+
+        $result[] = $sign . $str . $sign;
     }
     return $result;
 }}
@@ -558,7 +518,7 @@ if (function_exists('ajax_return') === false) {
  */
 function tc_str_stw($haystack, $needle)
 {
-    if (mb_strlen($needle) > 0 && strpos($haystack, $needle, 0) === 0) {
+    if (mb_strlen($needle) > 0 && mb_strpos($haystack, $needle, 0) === 0) {
         return true;
     }
 
