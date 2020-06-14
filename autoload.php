@@ -1,7 +1,13 @@
 <?php
 /**
- * Made at 2020/05/03 11:37:23
+ * Made at 2020/06/14 22:44:06
  */
+
+// tc_array_check常量集合
+const TC_N_NULL  = 8;
+const TC_N_EMPTY = 4;
+const TC_N_ZERO  = 2;
+const TC_N_FALSE = 1;
 
 if (function_exists('ajax_return') === false) {
 /**
@@ -33,34 +39,7 @@ function ajax_return($stat = 0, $msg = 'ok', $data = null, $return_json = false)
 }}
 
 
-if (function_exists('ajax_return') === false) {
-/**
- * 功能：http_build_query函数的逆函数
- * Created at 2018/10/1 10:21 by 陈庙琴
- * @param $query
- * @return array
- */
-function http_break_query($query)
-{
-    $result = [];
-    foreach (explode('&', $query) as $value) {
-        $value = explode('=', $value);
-        if (count($value) < 2) {
-            continue;
-        }
-        $result[$value[0]] = $value[1];
-    }
-
-    return $result;
-}}
-
-
-// tc_array_check常量集合
-const TC_N_NULL  = 8;
-const TC_N_EMPTY = 4;
-const TC_N_ZERO  = 2;
-const TC_N_FALSE = 1;
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_array_check') === false) {
 /**
  * 功能：验证数组中的元素是否均非null or 非空字符串 or 非零值
  * Created at 2020/5/2 21:48 by mq
@@ -75,18 +54,17 @@ function tc_array_check($data, $keys, $mode = 15)
     foreach ($keys as $key) {
         if (isset($data[$key]) === false) {
             $result .= '.' . $key . ' is not found;';
-        } else if (($mode & TC_N_NULL > 0) && ($data[$key] === null)) {
+        } else if (($mode & TC_N_NULL) && $data[$key] === null) {
             $result .= '.' . $key . ' is null;';
-        } else if (($mode & TC_N_EMPTY > 0)) { // 空字符串
+        } else if (($mode & TC_N_EMPTY)) { // 空字符串
             if ($data[$key] === '') {
                 $result .= '.' . $key . ' is empty string;';
-                continue;
             } else if ($data[$key] === []) { // 空数组
                 $result .= '.' . $key . ' is empty array;';
             }
-        } else if (($mode & TC_N_ZERO > 0) && ($data[$key] === 0 || $data[$key] === '0')) {
+        } else if (($mode & TC_N_ZERO) && ($data[$key] === 0 || $data[$key] === '0')) {
             $result .= '.' . $key . ' is zero;';
-        } else if ($mode & TC_N_FALSE > 0 && ($data[$key] === false)) {
+        } else if (($mode & TC_N_FALSE) && $data[$key] === false) {
             $result .= '.' . $key . ' is false';
         }
     }
@@ -95,7 +73,7 @@ function tc_array_check($data, $keys, $mode = 15)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_array_del') === false) {
 /**
  * 功能：删除数组中有特定值的元素
  * Created By mq at 下午6:35 2018/12/25
@@ -119,7 +97,7 @@ function tc_array_del(&$array, $delete_value, $count = 0)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_array_slc') === false) {
 /**
  * 功能：按白/黑名单过滤数组
  * 描述：白名单优先于黑名单
@@ -149,18 +127,32 @@ function tc_array_slc($array, $while_list = [], $black_list = [])
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_array_trim') === false) {
 /**
- * 功能：去除数组中值为空字符串或NULL的元素（和array_filter唯一的区别就是保留0数字值）
+ * 功能：去除数组中无意义值的元素（可自定义组合设置）
  * Created at 2018/10/1 10:20 by 陈庙琴
  * @param $array
+ * @param $mode
  * @return mixed
  */
-function tc_array_trim($array)
+function tc_array_trim($array, $mode = 6)
 {
     foreach ($array as $key => $value) {
-        if ($value === '' || $value === null) {
+        if (($mode & TC_N_NULL) && $value === null) {
             unset($array[$key]);
+            continue;
+        }
+        if (($mode & TC_N_EMPTY) && ($value === '' || $value === [])) {
+            unset($array[$key]);
+            continue;
+        }
+        if (($mode & TC_N_ZERO) && $value === 0) {
+            unset($array[$key]);
+            continue;
+        }
+        if (($mode & TC_N_FALSE) && $value === false) {
+            unset($array[$key]);
+            continue;
         }
     }
 
@@ -168,7 +160,7 @@ function tc_array_trim($array)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_gcn') === false) {
 /**
  * 功能：获取目标类的最终类名
  * Created at 2019/3/24 14:52 by mq
@@ -183,7 +175,7 @@ function tc_gcn($obj)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_gip') === false) {
 /**
  * 功能：获取IP地址
  * 注：代码节选自ThinkPHP5
@@ -209,7 +201,7 @@ function tc_gip()
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_gurl') === false) {
 /**
  * 功能：获取当前地址
  * Created at 2018/10/1 10:33 by 陈庙琴
@@ -243,7 +235,7 @@ function tc_gurl($with_uri = true, $with_query = true)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_req_ism') === false) {
 /**
  * 功能：判断请求是否来自于移动端
  * Created By mq at 09:42 2019-07-19
@@ -301,7 +293,7 @@ function tc_req_ism()
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_req_iswx') === false) {
 /**
  * 功能：判断请求是否来自于微信
  * Created By mq at 09:41 2019-07-19
@@ -320,7 +312,7 @@ function tc_req_iswx()
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_session_start') === false) {
 /**
  * 功能：如果session没启用，则启用session
  * Created at 2018/10/1 10:29 by 陈庙琴
@@ -333,7 +325,7 @@ function tc_session_start()
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_c2s') === false) {
 /**
  * 功能：字符串驼峰转蛇式
  * Created By mq at 15:14 2019-08-02
@@ -354,7 +346,7 @@ function tc_str_c2s($string, $split = '_')
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_edw') === false) {
 /**
  * 功能：判断字符串是否以某字符串为结尾
  * Created By mq at 15:23 2019-08-02
@@ -378,7 +370,7 @@ function tc_str_edw($haystack, $needle)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_g2u') === false) {
 /**
  * 功能：字符串由gb2312转成utf-8
  * Created at 2018/10/1 14:54 by 陈庙琴
@@ -391,7 +383,7 @@ function tc_str_g2u($string)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_limit') === false) {
 /**
  * 功能：字符串限制
  * Created at 2018/10/1 14:47 by 陈庙琴
@@ -411,7 +403,45 @@ function tc_str_limit($string, $length, $sign = '...')
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_ltrim') === false) {
+/**
+ * 功能：移除字符串左侧目标子字符串
+ * Created at 2020/6/14 22:16 by mq
+ * @param $string
+ * @param $str
+ * @return bool|string
+ */
+function tc_str_ltrim($string, $str)
+{
+    $length = strlen($str);
+    if (($length < strlen($string)) && (substr($string, 0, $length) === $str)) {
+        $string = substr($string, $length);
+    }
+
+    return $string;
+}}
+
+
+if (function_exists('tc_str_m21') === false) {
+/**
+ * 功能：去除字符串中重复的子字符串
+ * Created at 2020/6/14 22:37 by mq
+ * @param $string
+ * @param string $str
+ * @return mixed
+ */
+function tc_str_m21($string, $str = ' ')
+{
+    $dstr = $str . $str;
+    while (strpos($string, $dstr) !== false) {
+        $string = str_replace($dstr, $str, $string);
+    }
+
+    return $string;
+}}
+
+
+if (function_exists('tc_str_rand') === false) {
 /**
  * 功能：生成随机字符串
  * Created at 2020/5/3 10:24 by mq
@@ -441,7 +471,7 @@ function tc_str_rand($length = 4, $only_number = false, $case_insensitive = fals
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_rp') === false) {
 /**
  * 功能：字符串多路替换
  * Created at 2018/10/1 15:22 by 陈庙琴
@@ -458,7 +488,26 @@ function tc_str_rp($string, $replace_array)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_rtrim') === false) {
+/**
+ * 功能：移除字符串右侧目标子字符串
+ * Created at 2020/6/14 22:10 by mq
+ * @param $string
+ * @param $str
+ * @return bool|string
+ */
+function tc_str_rtrim($string, $str)
+{
+    $length = strlen($str);
+    if ($length < strlen($string) && (substr($string, (-1) * $length) === $str)) {
+        $string = substr($string, 0, strlen($string) - $length);
+    }
+
+    return $string;
+}}
+
+
+if (function_exists('tc_str_s2c') === false) {
 /**
  * 功能：字符串蛇式转驼峰
  * Created at 2020/5/2 22:25 by mq
@@ -482,7 +531,7 @@ function tc_str_s2c($string, $split = '_', $firstWordUpper = false)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_slice') === false) {
 /**
  * 功能：字符串切片
  * Created By mq at 下午7:13 2018/12/25
@@ -508,7 +557,7 @@ function tc_str_slice($string, $length, $sign = '')
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_stw') === false) {
 /**
  * 功能：判断字符串是否以某字符串为开头
  * Created By mq at 15:25 2019-08-02
@@ -526,7 +575,26 @@ function tc_str_stw($haystack, $needle)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('tc_str_trim') === false) {
+/**
+ * 功能：移除字符串两侧目标子字符串
+ * Created at 2020/6/14 22:18 by mq
+ * @param $string
+ * @param $str
+ * @return bool|string
+ */
+function tc_str_trim($string, $str)
+{
+    $string = tc_str_ltrim($string, $str);
+    if ($string !== false) {
+        $string = tc_str_rtrim($string, $str);
+    }
+
+    return $string;
+}}
+
+
+if (function_exists('tc_str_u2g') === false) {
 /**
  * 功能：字符串由utf-8转成gb2312
  * Created at 2018/10/1 14:54 by 陈庙琴
@@ -539,7 +607,7 @@ function tc_str_u2g($string)
 }}
 
 
-if (function_exists('ajax_return') === false) {
+if (function_exists('url_back') === false) {
 /**
  * 功能：使用js弹出消息并重定向到上一级
  * Created at 2018/10/1 10:49 by 陈庙琴
