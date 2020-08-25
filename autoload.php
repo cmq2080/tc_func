@@ -1,6 +1,6 @@
 <?php
 /**
- * Made at 2020/06/14 22:44:06
+ * Made at 2020/08/25 11:17:30
  */
 
 // tc_array_check常量集合
@@ -110,7 +110,7 @@ if (function_exists('tc_array_slc') === false) {
 function tc_array_slc($array, $while_list = [], $black_list = [])
 {
     $result = [];
-    if (empty($while_list) === true) {
+    if (empty($while_list) === false) {
         foreach ($while_list as $key) {
             if (isset($array[$key]) === true) {
                 $result[$key] = $array[$key];
