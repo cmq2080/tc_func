@@ -11,7 +11,7 @@
 function tc_array_slc($array, $while_list = [], $black_list = [])
 {
     $result = [];
-    if (empty($while_list) === true) {
+    if (empty($while_list) === false) {
         foreach ($while_list as $key) {
             if (isset($array[$key]) === true) {
                 $result[$key] = $array[$key];
